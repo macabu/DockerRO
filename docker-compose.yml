@@ -1,0 +1,50 @@
+version: '3.1'
+
+services:
+  login:
+    build:
+      context: .
+      dockerfile: ./login-server.Dockerfile
+      args:
+        MYSQL_USER: ragnarok
+        MYSQL_DATABASE: ragnarok
+        MYSQL_PASSWORD: ragnarok
+    ports:
+      - 6900:6900
+    links:
+      - db
+
+  db:
+    image: mariadb
+    restart: on-failure
+    environment:
+      MYSQL_USER: ragnarok
+      MYSQL_DATABASE: ragnarok
+      MYSQL_PASSWORD: ragnarok
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
+    volumes:
+      - ./sql-files/main.sql:/docker-entrypoint-initdb.d/main.sql
+      - ./sql-files/logs.sql:/docker-entrypoint-initdb.d/logs.sql
+  
+      # Pre-renewal
+      #- ./sql-files/item_db.sql:/docker-entrypoint-initdb.d/item_db.sql
+      #- ./sql-files/item_db2.sql:/docker-entrypoint-initdb.d/item_db2.sql
+      #- ./sql-files/mob_db.sql:/docker-entrypoint-initdb.d/mob_db.sql
+      #- ./sql-files/mob_db2.sql:/docker-entrypoint-initdb.d/mob_db2.sql
+      #- ./sql-files/mob_skill_db.sql:/docker-entrypoint-initdb.d/mob_skill_db.sql
+      #- ./sql-files/mob_skill_db2.sql:/docker-entrypoint-initdb.d/mob_skill_db2.sql
+
+      # Renewal
+      #- ./sql-files/item_db_re.sql:/docker-entrypoint-initdb.d/item_db_re.sql
+      #- ./sql-files/item_db2_re.sql:/docker-entrypoint-initdb.d/item_db2_re.sql
+      #- ./sql-files/mob_db_re.sql:/docker-entrypoint-initdb.d/mob_db_re.sql
+      #- ./sql-files/mob_db2_re.sql:/docker-entrypoint-initdb.d/mob_db2_re.sql      
+      #- ./sql-files/mob_skill_db_re.sql:/docker-entrypoint-initdb.d/mob_skill_db_re.sql
+      #- ./sql-files/mob_skill_db2_re.sql:/docker-entrypoint-initdb.d/mob_skill_db2_re.sql
+      
+      # Extras
+      #- ./sql-files/item_cash_db.sql:/docker-entrypoint-initdb.d/item_cash_db.sql
+      #- ./sql-files/item_cash_db2.sql:/docker-entrypoint-initdb.d/item_cash_db2.sql  
+      #- ./sql-files/roulette_default_data.sql:/docker-entrypoint-initdb.d/roulette_default_data.sql
