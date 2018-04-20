@@ -1,33 +1,50 @@
 version: '3.1'
 
 services:
-  login:
-    build:
-      context: .
-      dockerfile: ./login-server.Dockerfile
-      args:
-        MYSQL_USER: ragnarok
-        MYSQL_DATABASE: ragnarok
-        MYSQL_PASSWORD: ragnarok
-    ports:
-      - 6900:6900
+  login-server:
+    build: .
+    volumes:
+      - ./conf:/rathena/conf
     links:
       - db
+    entrypoint: /rathena/login-server
+    ports:
+      - 6900:6900
+
+  char-server:
+    build: .
+    volumes:
+      - ./conf:/rathena/conf
+    links:
+      - db
+    entrypoint: /rathena/map-server
+    ports:
+      - 6121:6121
+
+  map-server:
+    build: .
+    volumes:
+      - ./conf:/rathena/conf
+    links:
+      - db
+    entrypoint: /rathena/map-server
+    ports:
+      - 5121:5121
 
   db:
     image: mariadb
     restart: on-failure
     environment:
-      MYSQL_USER: ragnarok
       MYSQL_DATABASE: ragnarok
+      MYSQL_USER: ragnarok
       MYSQL_PASSWORD: ragnarok
       MYSQL_ROOT_PASSWORD: example
-    ports:
-      - 3306:3306
+    expose:
+      - 3306
     volumes:
       - ./sql-files/main.sql:/docker-entrypoint-initdb.d/main.sql
       - ./sql-files/logs.sql:/docker-entrypoint-initdb.d/logs.sql
-  
+
       # Pre-renewal
       #- ./sql-files/item_db.sql:/docker-entrypoint-initdb.d/item_db.sql
       #- ./sql-files/item_db2.sql:/docker-entrypoint-initdb.d/item_db2.sql
