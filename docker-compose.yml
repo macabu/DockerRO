@@ -5,10 +5,12 @@ services:
     build:
       context: .
       dockerfile: ./login-server.Dockerfile
-    volumes:
-      - .:/login-server
+      args:
+        MYSQL_USER: ragnarok
+        MYSQL_DATABASE: ragnarok
+        MYSQL_PASSWORD: ragnarok
     ports:
-      - "127.0.0.1:6900:6900"
+      - 6900:6900
     links:
       - db
 
@@ -21,7 +23,7 @@ services:
       MYSQL_PASSWORD: ragnarok
       MYSQL_ROOT_PASSWORD: example
     ports:
-      - "127.0.0.1:3306:3306"
+      - 3306:3306
     volumes:
       - ./sql-files/main.sql:/docker-entrypoint-initdb.d/main.sql
       - ./sql-files/logs.sql:/docker-entrypoint-initdb.d/logs.sql
