@@ -17,7 +17,7 @@ services:
       - ./conf:/rathena/conf
     links:
       - db
-    entrypoint: /rathena/map-server
+    entrypoint: /rathena/char-server
     ports:
       - 6121:6121
 
@@ -27,6 +27,7 @@ services:
       - ./conf:/rathena/conf
     links:
       - db
+      - char-server
     entrypoint: /rathena/map-server
     ports:
       - 5121:5121
