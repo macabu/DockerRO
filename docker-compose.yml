@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  login:
+  login-server:
     build:
       context: .
       dockerfile: ./login-server.Dockerfile
@@ -9,9 +9,49 @@ services:
         MYSQL_USER: ragnarok
         MYSQL_DATABASE: ragnarok
         MYSQL_PASSWORD: ragnarok
+    expose:
+      - 6900
     ports:
       - 6900:6900
+    depends_on:
+      - db
     links:
+      - db
+
+  char-server:
+    build:
+      context: .
+      dockerfile: ./char-server.Dockerfile
+      args:
+        MYSQL_USER: ragnarok
+        MYSQL_DATABASE: ragnarok
+        MYSQL_PASSWORD: ragnarok
+    expose:
+      - 6121
+    ports:
+      - 6121:6121
+    depends_on:
+      - login-server
+    links:
+      - login-server
+      - db
+
+  map-server:
+    build:
+      context: .
+      dockerfile: ./map-server.Dockerfile
+      args:
+        MYSQL_USER: ragnarok
+        MYSQL_DATABASE: ragnarok
+        MYSQL_PASSWORD: ragnarok
+    expose:
+      - 5121
+    ports:
+      - 5121:5121
+    depends_on:
+      - char-server
+    links:
+      - char-server
       - db
 
   db:
@@ -22,6 +62,8 @@ services:
       MYSQL_DATABASE: ragnarok
       MYSQL_PASSWORD: ragnarok
       MYSQL_ROOT_PASSWORD: example
+    expose:
+      - 3306
     ports:
       - 3306:3306
     volumes:

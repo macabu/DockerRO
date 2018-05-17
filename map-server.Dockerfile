@@ -6,27 +6,26 @@ ARG MYSQL_PASSWORD
 
 RUN apk --update add --no-cache build-base mariadb-dev pcre-dev zlib-dev
 
-COPY 3rdparty /login-server/3rdparty
-COPY conf /login-server/conf
-COPY src/custom /login-server/src/custom
-COPY src/config /login-server/src/config
-COPY src/login /login-server/src/login
-COPY src/common /login-server/src/common
-COPY src/char/Makefile.in /login-server/src/char/Makefile.in
-COPY src/map/Makefile.in /login-server/src/map/Makefile.in
-COPY src/tool/Makefile.in /login-server/src/tool/Makefile.in
-COPY configure /login-server/configure
-COPY configure.in /login-server/configure.in
-COPY Makefile.in /login-server/Makefile.in
+COPY 3rdparty /map-server/3rdparty
+COPY conf /map-server/conf
+COPY db /map-server/db
+COPY npc /map-server/npc
+COPY src /map-server/src
+COPY configure /map-server/configure
+COPY configure.in /map-server/configure.in
+COPY Makefile.in /map-server/Makefile.in
 
-WORKDIR /login-server
+WORKDIR /map-server
 
 RUN ./configure
-RUN make login
+RUN make map
 
 RUN mv conf/import-tmpl conf/import
 
-RUN echo 'bind_ip: login-server' >> conf/import/login_conf.txt
+RUN echo $'char_ip: char-server\n\
+bind_ip: map-server\n\
+map_ip: map-server'\
+>> conf/import/map_conf.txt
 
 RUN echo $'login_server_ip: db\n\
 login_server_port: 3306\n\
@@ -55,4 +54,4 @@ log_db_pw: '$MYSQL_PASSWORD''$'\n\
 log_db_db: '$MYSQL_DATABASE''\
 >> conf/import/inter_conf.txt
 
-CMD ["/login-server/login-server"]
+CMD ["/map-server/map-server"]
